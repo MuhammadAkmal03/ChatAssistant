@@ -113,6 +113,7 @@ function App() {
   const [error, setError] = useState("");
   const [serverStatus, setServerStatus] = useState("checking");
   const [lastSource, setLastSource] = useState("");
+  const [pendingAudio, setPendingAudio] = useState(null);
   const [sessionStats, setSessionStats] = useState({ turns: 0, wordCount: 0, avgResponseMs: 0, lastResponseMs: 0, sessionStart: null });
   const responseTimerRef = useRef(null);
   const [sessionElapsed, setSessionElapsed] = useState(0);
@@ -122,6 +123,7 @@ function App() {
   const streamRef = useRef(null);
   const transcriptRef = useRef(null);
   const messagesRef = useRef(initialMessages);
+  const audioUrlRef = useRef("");
 
   const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
 
@@ -157,10 +159,42 @@ function App() {
     return () => clearInterval(id);
   }, [sessionStats.sessionStart]);
 
+  function createAudioUrl(audioBase64, audioMimeType) {
+    const binary = atob(audioBase64);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    const blob = new Blob([bytes], { type: audioMimeType || "audio/wav" });
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+    audioUrlRef.current = URL.createObjectURL(blob);
+    return audioUrlRef.current;
+  }
+
+  async function playAudioUrl(url) {
+    const audio = new Audio(url);
+    audio.playsInline = true;
+    await audio.play();
+  }
+
   function playApiAudio(audioBase64, audioMimeType) {
-    if (muted || !audioBase64) return;
-    const audio = new Audio(`data:${audioMimeType || "audio/wav"};base64,${audioBase64}`);
-    audio.play().catch(() => setError("Audio blocked by browser — click the page once and try again."));
+    if (!audioBase64) return;
+    const url = createAudioUrl(audioBase64, audioMimeType);
+    setPendingAudio({ url, mimeType: audioMimeType || "audio/wav" });
+    if (muted) return;
+    playAudioUrl(url)
+      .then(() => setPendingAudio(null))
+      .catch(() => {
+        setError("Mobile browser blocked automatic audio. Tap 'Play latest reply' below.");
+      });
+  }
+
+  function playPendingAudio() {
+    if (!pendingAudio?.url) return;
+    setError("");
+    playAudioUrl(pendingAudio.url)
+      .then(() => setPendingAudio(null))
+      .catch(() => setError("Could not play audio. Check phone volume/silent mode and try again."));
   }
 
   function updateConversation(transcript, reply, audioBase64, audioMimeType) {
@@ -310,6 +344,11 @@ function App() {
     setIsThinking(false);
     setError("");
     setLastSource("");
+    setPendingAudio(null);
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = "";
+    }
     setSessionStats({ turns: 0, wordCount: 0, avgResponseMs: 0, lastResponseMs: 0, sessionStart: null });
     setSessionElapsed(0);
     responseTimerRef.current = null;
@@ -409,6 +448,12 @@ function App() {
           </div>
         )}
         {error && <div className="support-note" id="error-note">{error}</div>}
+        {pendingAudio && (
+          <button className="manual-play-action" type="button" onClick={playPendingAudio}>
+            <Volume2 size={17} />
+            Play latest reply
+          </button>
+        )}
 
         {/* Quick demo buttons */}
         <div className="quick-grid">

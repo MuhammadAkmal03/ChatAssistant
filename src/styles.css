@@ -402,6 +402,26 @@ h1 span { color: var(--accent); }
   color: #1d4ed8;
 }
 
+.manual-play-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--green);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);
+}
+
+.manual-play-action:hover {
+  background: #15803d;
+}
+
 /* ── Quick Grid ──────────────────────────── */
 .quick-grid {
   display: grid;
