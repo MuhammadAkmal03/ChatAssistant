@@ -476,6 +476,40 @@ function App() {
 
       {/* ── Right: Insight Panel ── */}
       <aside className="insight-panel">
+        {/* Live Transcript */}
+        <div className="transcript-card">
+          <div className="section-heading">
+            <PhoneCall size={15} />
+            <h2>Live Transcript</h2>
+          </div>
+          <div className="transcript" ref={transcriptRef}>
+            {messages.map((msg, i) => (
+              <div className={`message ${msg.speaker}`} key={`${msg.speaker}-${i}`}>
+                <div className="avatar">
+                  {msg.speaker === "assistant" ? <Bot size={14} /> : <UserRound size={14} />}
+                </div>
+                <p>{msg.text}</p>
+              </div>
+            ))}
+            {isThinking && (
+              <div className="message assistant">
+                <div className="avatar"><Bot size={14} /></div>
+                <div className="thinking-dots">
+                  <span /><span /><span />
+                </div>
+              </div>
+            )}
+            {pendingAudio && (
+              <div className="transcript-play-row">
+                <button className="manual-play-action" type="button" onClick={playPendingAudio}>
+                  <Volume2 size={17} />
+                  Play latest reply
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Metrics */}
         <div className="metric-band" aria-label="Business impact">
           <div>
@@ -570,39 +604,6 @@ function App() {
           )}
         </div>
 
-        {/* Live Transcript */}
-        <div className="transcript-card">
-          <div className="section-heading">
-            <PhoneCall size={15} />
-            <h2>Live Transcript</h2>
-          </div>
-          <div className="transcript" ref={transcriptRef}>
-            {messages.map((msg, i) => (
-              <div className={`message ${msg.speaker}`} key={`${msg.speaker}-${i}`}>
-                <div className="avatar">
-                  {msg.speaker === "assistant" ? <Bot size={14} /> : <UserRound size={14} />}
-                </div>
-                <p>{msg.text}</p>
-              </div>
-            ))}
-            {isThinking && (
-              <div className="message assistant">
-                <div className="avatar"><Bot size={14} /></div>
-                <div className="thinking-dots">
-                  <span /><span /><span />
-                </div>
-              </div>
-            )}
-            {pendingAudio && (
-              <div className="transcript-play-row">
-                <button className="manual-play-action" type="button" onClick={playPendingAudio}>
-                  <Volume2 size={17} />
-                  Play latest reply
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
       </aside>
     </div>
   );
