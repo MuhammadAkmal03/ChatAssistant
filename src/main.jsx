@@ -448,12 +448,6 @@ function App() {
           </div>
         )}
         {error && <div className="support-note" id="error-note">{error}</div>}
-        {pendingAudio && (
-          <button className="manual-play-action" type="button" onClick={playPendingAudio}>
-            <Volume2 size={17} />
-            Play latest reply
-          </button>
-        )}
 
         {/* Quick demo buttons */}
         <div className="quick-grid">
@@ -597,6 +591,14 @@ function App() {
                 <div className="thinking-dots">
                   <span /><span /><span />
                 </div>
+              </div>
+            )}
+            {pendingAudio && (
+              <div className="transcript-play-row">
+                <button className="manual-play-action" type="button" onClick={playPendingAudio}>
+                  <Volume2 size={17} />
+                  Play latest reply
+                </button>
               </div>
             )}
           </div>

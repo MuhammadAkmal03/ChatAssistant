@@ -649,6 +649,21 @@ h1 span { color: var(--accent); }
 .transcript::-webkit-scrollbar { width: 4px; }
 .transcript::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+.transcript-play-row {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: flex-start;
+  padding: 8px 0 2px 35px;
+  background: linear-gradient(180deg, rgba(255,255,255,0), var(--panel) 38%);
+}
+
+.transcript-play-row .manual-play-action {
+  min-height: 38px;
+  box-shadow: 0 8px 22px rgba(22, 163, 74, 0.28);
+}
+
 .message {
   display: flex;
   align-items: flex-start;
@@ -799,4 +814,6 @@ h1 span { color: var(--accent); }
   .quick-grid { grid-template-columns: 1fr; }
   .assistant-stage { flex-direction: column; text-align: center; gap: 16px; padding: 24px 20px; }
   .metric-band strong { font-size: 1.4rem; }
+  .transcript-play-row { padding-left: 0; justify-content: center; }
+  .transcript-play-row .manual-play-action { width: 100%; }
 }
