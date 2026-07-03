@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: malayalam-voice-assistant-demo
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: SARVAM_STT_MODEL
+        value: saaras:v3
+      - key: SARVAM_CHAT_MODEL
+        value: sarvam-30b
+      - key: SARVAM_TTS_MODEL
+        value: bulbul:v3
+      - key: SARVAM_TTS_SPEAKER
+        value: ritu
+      - key: SARVAM_LANGUAGE_CODE
+        value: ml-IN
